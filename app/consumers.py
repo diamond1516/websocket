@@ -1,11 +1,16 @@
 # consumers.py
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from channels.consumer import SyncConsumer
 
 
 class SomeConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
+        await self.send(text_data=json.dumps(
+            {'msg': 'salom'}
+        ))
+        print(self.scope.get('user'))
 
     async def disconnect(self, close_code):
         pass

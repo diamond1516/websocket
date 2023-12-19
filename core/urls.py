@@ -17,13 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app import consumers
-
-websocket_urlpatterns = [
-    # Misol uchun:
-    path("ws/some_path/", consumers.SomeConsumer.as_asgi()),
-]
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
