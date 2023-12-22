@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -25,8 +24,7 @@ SECRET_KEY = 'django-insecure-lbe49iveobg3jrwp^8b054#kefr(e#s7)g5+#+4%5e=341###^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -39,7 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'rest_framework',
+    'social_django',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    # Boshqa backend nomlari
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '404527887290-4qb6bantq9c9nucb8vd6nbe484re6g18.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -72,7 +80,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -82,7 +89,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -102,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -113,7 +118,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

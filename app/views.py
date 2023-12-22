@@ -1,25 +1,18 @@
 import pprint
 
 from django.shortcuts import render
-
-# Create your views here.
-
-
-# views.py
 from django.shortcuts import redirect
-from django.http import JsonResponse
-from django.views import View
 import requests
+from rest_framework import views, generics
+from rest_framework.response import Response
 
 
-
-class GoogleLoginView(View):
+class GoogleLoginView(views.APIView):
     def get(self, request, *args, **kwargs):
-        # Google OAuth yozuvini olish
         google_oauth_url = 'https://accounts.google.com/o/oauth2/auth'
-        client_id = '404527887290-4qb6bantq9c9nucb8vd6nbe484re6g18.apps.googleusercontent.com'  # Google yonida olingan client_id
-        redirect_uri = 'http://localhost:8000/auth/google/callback'  # Google yonida olingan redirect_uri
-        scope = 'openid profile email'  # Siz kerakli huquqlarni sozlab chiquvchi ruhnoma
+        client_id = '404527887290-4qb6bantq9c9nucb8vd6nbe484re6g18.apps.googleusercontent.com'
+        redirect_uri = 'http://localhost:8000/auth/google/callback'
+        scope = 'openid profile email'
 
         google_auth_url = f'{google_oauth_url}?client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}&response_type=code'
         return redirect(google_auth_url)
@@ -28,13 +21,10 @@ class GoogleLoginView(View):
 # views.py
 
 
-class GoogleCallbackView(View):
+class GoogleCallbackView(views.APIView):
     def get(self, request, *args, **kwargs):
-        # Google dan kelgan ma'lumotlarni tekshirish
         code = request.GET.get('code')
-        redirect_uri = 'http://localhost:8000/auth/google/callback'  # Google yonida olingan redirect_uri
-
-        # Token so'rovi
+        redirect_uri = 'http://localhost:8000/auth/google/callback'
         token_url = 'https://accounts.google.com/o/oauth2/token'
         token_payload = {
             'code': code,
@@ -43,17 +33,29 @@ class GoogleCallbackView(View):
             'redirect_uri': redirect_uri,
             'grant_type': 'authorization_code',
         }
-        # pprint.pprint(token_payload)
         response = requests.post(token_url, data=token_payload)
         access_token = response.json().get('access_token')
-        # print(access_token)
-
-        # Foydalanuvchi ma'lumotlarini olish
         user_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
         user_response = requests.get(user_url, headers={'Authorization': f'Bearer {access_token}'})
         user_data = user_response.json()
+        print(user_data)
+        return redirect(f'https://soff.uz?token={access_token}')
 
-        # Foydalanuvchini serverda yaratish yoki kirish
-        # ...
-        # pprint.pprint(user_data)
-        return JsonResponse({'status': user_data})
+
+data = {
+    "id": "103791320599707161265",
+    "email": "ahmadboyabdurahimov589@gmail.com",
+    "verified_email": True,
+    "name": "AHMADBOY Abdurahimov",
+    "given_name": "AHMADBOY",
+    "family_name": "Abdurahimov",
+    "picture": "https://lh3.googleusercontent.com/a/ACg8ocKJIX68GP0j4WRTSrIyUT5v6sUgljdfV1OP7lCUoMgYDw=s96-c",
+    "locale": "ru"
+}
+
+
+class Salom(views.APIView):
+
+    def get(self, request):
+        print(1111111)
+        return Response({'msg': 'salom'})
