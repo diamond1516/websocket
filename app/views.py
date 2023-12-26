@@ -38,24 +38,12 @@ class GoogleCallbackView(views.APIView):
         user_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
         user_response = requests.get(user_url, headers={'Authorization': f'Bearer {access_token}'})
         user_data = user_response.json()
-        print(user_data)
-        return redirect(f'https://soff.uz?token={access_token}')
 
-
-data = {
-    "id": "103791320599707161265",
-    "email": "ahmadboyabdurahimov589@gmail.com",
-    "verified_email": True,
-    "name": "AHMADBOY Abdurahimov",
-    "given_name": "AHMADBOY",
-    "family_name": "Abdurahimov",
-    "picture": "https://lh3.googleusercontent.com/a/ACg8ocKJIX68GP0j4WRTSrIyUT5v6sUgljdfV1OP7lCUoMgYDw=s96-c",
-    "locale": "ru"
-}
+        return Response({'msg': user_data})
+        # return redirect(f'https://soff.uz?token={access_token}')
 
 
 class Salom(views.APIView):
 
     def get(self, request):
-        print(1111111)
         return Response({'msg': 'salom'})
