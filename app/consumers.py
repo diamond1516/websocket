@@ -10,8 +10,12 @@ class SomeConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(
             {'msg': 'salom'}
         ))
+        print(self.scope.get('user'))
 
     async def disconnect(self, close_code):
+        await self.send(text_data=json.dumps({
+            'msg': 'disconnect'
+        }))
         pass
 
     async def receive(self, text_data):
