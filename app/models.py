@@ -1,6 +1,8 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -19,20 +21,22 @@ class Order(models.Model):
         choices=[('pending', 'Pending'), ('cencelled', 'Cencelled'), ('completed', 'Completed')]
     )
 
-    def save(self, *args, **kwargs):
-        channel_layer = self.scope.get('channel_layer', get_channel_layer())
+
+@receiver(post_save, sender=Order)
+def order_status_changed(sender, instance, **kwargs):
+    # Order modeli saqlanganidan so'ng, status o'zgarsa, WebSocket orqali xabar yuborish
+    if True:
+        channel_layer = get_channel_layer()
+        group_name = 'order_status_group'
+
+        # Groupdan foydalanib xabar yuborish
         async_to_sync(channel_layer.group_send)(
-            'salom',
+            group_name,
             {
-                "type": "notification.send",
-                "data": {
-                    'status': self.status,
-                    "message": f"Buyurtmangiz {self.status} holatiga kirdi",
-                    "order": self.pk,
+                'type': 'order.status_changed',
+                'message': {
+                    'order_id': instance.id,
+                    'new_status': instance.status,
                 },
             },
         )
-
-        super(Order, self).save(*args, **kwargs)
-
-
