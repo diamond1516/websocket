@@ -22,6 +22,26 @@ class Order(models.Model):
     )
 
 
+# @receiver(post_save, sender=Order)
+# def order_status_changed(sender, instance, **kwargs):
+#     # Order modeli saqlanganidan so'ng, status o'zgarsa, WebSocket orqali xabar yuborish
+#     if True:
+#         channel_layer = get_channel_layer()
+#         group_name = 'order_status_group'
+#
+#         # Groupdan foydalanib xabar yuborish
+#         async_to_sync(channel_layer.group_send)(
+#             group_name,
+#             {
+#                 'type': 'notification_send',
+#                 'message': {
+#                     'order_id': instance.id,
+#                     'new_status': instance.status,
+#                 },
+#             },
+#         )
+
+
 @receiver(post_save, sender=Order)
 def order_status_changed(sender, instance, **kwargs):
     # Order modeli saqlanganidan so'ng, status o'zgarsa, WebSocket orqali xabar yuborish
@@ -33,10 +53,18 @@ def order_status_changed(sender, instance, **kwargs):
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
-                'type': 'order.status_changed',
+                'type': 'salom',
                 'message': {
                     'order_id': instance.id,
                     'new_status': instance.status,
                 },
             },
         )
+
+
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
